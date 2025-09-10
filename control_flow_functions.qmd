@@ -1,0 +1,106 @@
+---
+title: "Homework 3"
+author: "Nathan Honea"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+library(tidyverse)
+load("hw2_list.rda")
+```
+
+# Task 1: Control Flow Practice
+
+In this section, I create empty character variables called status in both the treatment and placebo data frames within bp_list. 
+
+I then fill each status variable for each observation, taking on one of three values:
+
+* "high"
+* "borderline"
+* "optimal" 
+
+depending on the post-treatment blood pressure score. This is done using separate for loops for each data frame, with if/then/else logic used to assign the status values.
+```{r}
+# add status column to both the treatment and placebo data frames stored in bp_list
+bp_list$treatment$status <- character(20)
+bp_list$placebo$status <- character(10)
+
+# use if/then/else logic in a for loop to create values for status variable in treatment data frame
+for (i in 1:length(bp_list$treatment$status)) {
+  if (bp_list$treatment$post_bp[i] > 130){
+    bp_list$treatment$status[i] = "high"
+  } else if (bp_list$treatment$post_bp[i] <= 130 & 
+             bp_list$treatment$post_bp[i] > 120){
+    bp_list$treatment$status[i] = "borderline"
+  } else if (bp_list$treatment$post_bp[i] <= 120){
+    bp_list$treatment$status[i] = "optimal"
+  }
+}
+
+# use if/then/else logic in a for loop to create values for status variable in placebo data frame
+for (i in 1:length(bp_list$placebo$status)) {
+  if (bp_list$placebo$post_bp[i] > 130){
+    bp_list$placebo$status[i] = "high"
+  } else if (bp_list$placebo$post_bp[i] <= 130 & 
+             bp_list$placebo$post_bp[i] > 120){
+    bp_list$placebo$status[i] = "borderline"
+  } else if (bp_list$placebo$post_bp[i] <= 120){
+    bp_list$placebo$status[i] = "optimal"
+  }
+}
+```
+
+# Task 2: Function Writing
+
+The below function is written to take any list that includes two data frames `treatment` and `placebo`. It also takes in a function within a quoted string that is used to summarize the `pre_bp`, `post_bp`, and `diff_bp` variables in these data frames, with this function having a default value of "mean". 
+
+The function stores each data frame as an object, accesses the summary function using `get(stat)`, and then stores the summary values from the variables of interest in objects. The objects are then combined into a vector of length six, and names are assigned to the vector by creating a vector where names are dynamically created using `paste0` and the user assigned value in the `stat` function (which again, defaults to "mean"). This vector of dynamic names is stored as the names of the vector of values using the `names()` function, and the now named vector of summary values is output using the `return()` function.
+
+
+
+```{r}
+
+# write a function that takes in a list with two data frames in it and function to find a summary of a numeric column with a default of "mean"
+output_summary_stats <- function(list, stat = "mean") {
+  #store the treatment and placebo data frames in the list as objects
+  treatment <- list$treatment
+  placebo <- list$placebo
+  
+  #get the function from the quoted string
+  my_fun <- get(stat) 
+  
+  # get summary stats using sum_function
+  pre_trt <- my_fun(treatment$pre_bp)
+  post_trt <- my_fun(treatment$post_bp)
+  diff_trt <- my_fun(treatment$diff_bp)
+  pre_plac <- my_fun(placebo$pre_bp)
+  post_plac <- my_fun(placebo$post_bp)
+  diff_plac <- my_fun(placebo$diff_bp)
+  
+  # combine summary stats into a vector
+  summary_vector <- c(pre_trt, post_trt, diff_trt, pre_plac, post_plac, diff_plac)
+  
+  # give the values in the vector useful and relevant names
+  names(summary_vector) <- c(paste0(stat,"_pre_trt"), paste0(stat,"_post_trt"), paste0(stat,"_diff_trt"), paste0(stat,"_pre_plac"), paste0(stat,"_post_plac"), paste0(stat,"_diff_plac"))
+  
+  return(summary_vector)
+}
+
+# treatment and placebo means
+output_summary_stats(bp_list)
+
+# treatment and placebo variances
+output_summary_stats(bp_list, stat = "var")
+
+# treatment and placebo standard deviations
+output_summary_stats(bp_list, stat = "sd")
+
+# treatment and placebo minimums
+output_summary_stats(bp_list, stat = "min")
+
+# treatment and placebo maximums
+output_summary_stats(bp_list, stat = "max")
+```
