@@ -6,7 +6,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-
 ```{r}
 library(tidyverse)
 load("hw2_list.rda")
@@ -58,8 +57,6 @@ for (i in 1:length(bp_list$placebo$status)) {
 The below function is written to take any list that includes two data frames `treatment` and `placebo`. It also takes in a function within a quoted string that is used to summarize the `pre_bp`, `post_bp`, and `diff_bp` variables in these data frames, with this function having a default value of "mean". 
 
 The function stores each data frame as an object, accesses the summary function using `get(stat)`, and then stores the summary values from the variables of interest in objects. The objects are then combined into a vector of length six, and names are assigned to the vector by creating a vector where names are dynamically created using `paste0` and the user assigned value in the `stat` function (which again, defaults to "mean"). This vector of dynamic names is stored as the names of the vector of values using the `names()` function, and the now named vector of summary values is output using the `return()` function.
-
-
 
 ```{r}
 
