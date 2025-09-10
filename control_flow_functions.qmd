@@ -2,9 +2,7 @@
 title: "Homework 3"
 author: "Nathan Honea"
 format: html
-editor_options: 
-  chunk_output_type: console
----
+--- 
 
 ```{r}
 library(tidyverse)
